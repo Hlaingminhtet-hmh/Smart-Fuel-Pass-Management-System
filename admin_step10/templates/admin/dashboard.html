@@ -1,0 +1,113 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h1 style="font-size:32px; margin:0 0 6px">Admin Dashboard</h1>
+<p class="muted">National fuel-pass control center</p>
+
+{% if error %}
+  <div class="error">{{ error }}</div>
+{% endif %}
+
+<div class="grid kpis">
+  <div class="card">
+    <div class="kpi-title">Total Vehicles</div>
+    <div class="kpi-value">{{ summary.total_vehicles|default(0) }}</div>
+    <div class="kpi-sub">{{ summary.active_vehicles|default(0) }} active</div>
+  </div>
+
+  <div class="card">
+    <div class="kpi-title">Active Stations</div>
+    <div class="kpi-value">{{ summary.active_stations|default(0) }}</div>
+    <div class="kpi-sub">of {{ summary.total_stations|default(0) }} total</div>
+  </div>
+
+  <div class="card">
+    <div class="kpi-title">Today's Transactions</div>
+    <div class="kpi-value">{{ summary.today_transactions|default(0) }}</div>
+    <div class="kpi-sub">{{ '%.2f'|format(summary.today_liters|default(0)) }} L distributed</div>
+  </div>
+
+  <div class="card">
+    <div class="kpi-title">Pending Vehicle Registry</div>
+    <div class="kpi-value">{{ summary.registry_pending|default(0) }}</div>
+    <div class="kpi-sub">{{ summary.registry_approved|default(0) }} approved</div>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 2fr 1fr">
+  <div class="card">
+    <div class="section-head">
+      <div>
+        <h2 style="margin:0">Official Vehicle Registry</h2>
+        <div class="muted" style="font-size:13px">Authority-controlled vehicle master records</div>
+      </div>
+      <div style="display:flex; gap:8px">
+        <a class="button secondary" href="{{ url_for('admin_api.admin_quota_policies') }}">Quota Policies</a>
+        <a class="button" href="{{ url_for('admin_api.admin_vehicles') }}">Manage Vehicles</a>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Plate</th>
+            <th>Owner</th>
+            <th>Type</th>
+            <th>Fuel</th>
+            <th>Quota</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in registry %}
+            <tr>
+              <td><strong>{{ v.plate_number }}</strong></td>
+              <td>{{ v.owner_name }}</td>
+              <td>{{ v.vehicle_type }}</td>
+              <td>{{ v.fuel_type }}</td>
+              <td>{{ '%.2f'|format(v.weekly_quota or 0) }} L</td>
+              <td><span class="badge {{ v.status }}">{{ v.status|capitalize }}</span></td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="muted">No registry vehicles yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <div>
+        <h2 style="margin:0">Control Center</h2>
+        <div class="muted" style="font-size:13px">Next steps for governance</div>
+      </div>
+    </div>
+    
+    <div style="display:grid; gap:12px">
+      <div class="card" style="box-shadow:none; background:#eff4ff">
+        <strong>Vehicle approvals</strong>
+        <div class="muted">Only approved records can be claimed by users.</div>
+      </div>
+
+      <div class="card" style="box-shadow:none; background:#eff4ff">
+        <strong>Station operators</strong>
+        <div class="muted">Operators remain assigned to one station.</div>
+      </div>
+
+      <div class="card" style="box-shadow:none; background:#eff4ff">
+        <strong>Fuel pricing</strong>
+        <div class="muted">Official prices are controlled centrally.</div>
+      </div>
+
+      <div class="card" style="box-shadow:none; background:#eff4ff">
+        <strong>Quota policies</strong>
+        <div class="muted">{{ summary.active_quota_policies|default(0) }} active policies control weekly entitlement.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

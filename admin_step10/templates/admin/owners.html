@@ -1,0 +1,55 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <h1>Vehicle Owners</h1>
+    <p class="muted">Registered user accounts and ownership identities.</p>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom: 18px;">
+  <form class="form-grid" style="grid-template-columns: 2fr auto;">
+    <div class="field">
+      <label>Search</label>
+      <input name="search" value="{{ search }}" placeholder="Name, National ID, phone...">
+    </div>
+    <div style="align-self: end;">
+      <button class="button secondary">Search</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>National ID</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Admin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in owners %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td><strong>{{ u.name }}</strong></td>
+            <td>{{ u.national_id or '—' }}</td>
+            <td>{{ u.phone or '—' }}</td>
+            <td>{{ u.role }}</td>
+            <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="muted">No owners found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
