@@ -1,0 +1,2 @@
+<uses-permission android:name="android.permission.INTERNET" />
+Set android:usesCleartextTraffic="true" on <application> for development HTTP.
